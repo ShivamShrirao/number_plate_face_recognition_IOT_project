@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import pytesseract
 from multiprocessing import Process
+from threading import Thread, RLock
 
 COLOR = (0,255,0)
 
@@ -13,8 +14,14 @@ cam = cv2.VideoCapture(0)
 cv2.namedWindow("output", cv2.WINDOW_NORMAL)
 cv2.resizeWindow("output", 640,480)
 
-def get_text(plate):
-	text=pytesseract.image_to_string(plate,lang='eng',config="--oem 0 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+def get_text():
+	global plate,splate
+	plate = cv2.GaussianBlur(plate, (7, 7), 0)
+	plate = cv2.erode(plate, (6, 6))
+	plate = cv2.dilate(plate, (6, 6))
+	# ret,plate = cv2.threshold(plate,127,255,cv2.THRESH_BINARY)
+	splate = cv2.adaptiveThreshold(plate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,7,2)
+	text=pytesseract.image_to_string(splate,lang='eng',config="--oem 0 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	if len(text)>6 and len(text)<16:
 		print(text)
 
@@ -60,17 +67,11 @@ while cam.isOpened():
 				plate = img[top:bottom,left:right]
 				try:
 					plate = cv2.cvtColor(plate, cv2.COLOR_BGR2GRAY)
-					plate = cv2.GaussianBlur(plate, (7, 7), 0)
-					plate = cv2.erode(plate, (6, 6))
-					plate = cv2.dilate(plate, (6, 6))
-					# ret,plate = cv2.threshold(plate,127,255,cv2.THRESH_BINARY)
-					plate = cv2.adaptiveThreshold(plate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,7,2)
-					p1=Process(target=get_text, args=(plate, ))
+					# p1=Process(target=get_text, args=())
+					p1=Thread(target=get_text, args=())
+					p1.setDaemon(True)
 					p1.start()
-					# text=pytesseract.image_to_string(plate,lang='eng',config="--oem 0 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-					# if len(text)>6 and len(text)<16:
-					# 	print(text)
-					cv2.imshow("plate",plate)
+					cv2.imshow("plate",splate)
 				except Exception as e:
 					print(e)
 					pass
