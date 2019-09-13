@@ -20,13 +20,17 @@ def recognize_faces(encoding):
 	if True in matches:
 		matchIdx = [i for (i,b) in enumerate(matches) if b]
 		counts = {}
-
 		for i in matchIdx:
 			name=data["names"][i]
 			counts[name] = counts.get(name,0) + 1
 
 		name = max(counts,key=counts.get)
 	return name
+
+def unload_buffer():
+	global cam
+	for i in range(10):
+		cam.read()
 
 #cam = cv2.VideoCapture(0)
 cam = VideoStream(src=0).start()
@@ -36,6 +40,9 @@ while True:
 	f+=1
 	if not f%10:
 		f=0
+		t1=Thread(target=unload_buffer)
+		t1.setDaemon(True)
+		t1.start()
 		img = cam.read()
 	#	ret, img = cam.read()
 		# img = cv2.flip(img, 0)
