@@ -10,7 +10,7 @@ ssdnet = cv2.dnn.readNetFromTensorflow('trained_model/frozen_inference_graph.pb'
 cam = cv2.VideoCapture(0)
 
 cv2.namedWindow("output", cv2.WINDOW_NORMAL)
-# cv2.resizeWindow("output", 1280,720)
+cv2.resizeWindow("output", 640,480)
 
 f=0
 while f<0:
@@ -46,7 +46,7 @@ while cam.isOpened():
 		if score >0.2:
 			left=int(detection[3]*cols)
 			top=int(detection[4]*rows)-15
-			right=int(detection[5]*cols)+20
+			right=int(detection[5]*cols)+10
 			bottom=int(detection[6]*rows)+15
 
 			cv2.rectangle(img, (left, top), (right, bottom), COLOR, 2)
@@ -58,9 +58,9 @@ while cam.isOpened():
 				plate = cv2.erode(plate, (6, 6))
 				plate = cv2.dilate(plate, (6, 6))
 				# ret,plate = cv2.threshold(plate,127,255,cv2.THRESH_BINARY)
-				plate = cv2.adaptiveThreshold(plate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,7,2)				
-				text=pytesseract.image_to_string(plate,lang='eng',config="-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-				if len(text)>5 and len(text)<16:
+				plate = cv2.adaptiveThreshold(plate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,7,2)
+				text=pytesseract.image_to_string(plate,lang='eng',config="--oem 0 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+				if len(text)>6 and len(text)<16:
 					print(text)
 				cv2.imshow("plate",plate)
 			except:
