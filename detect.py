@@ -1,8 +1,7 @@
 import cv2
 import numpy as np
 import pytesseract
-from multiprocessing import Process
-from threading import Thread, RLock
+from threading import Thread
 
 COLOR = (0,255,0)
 
@@ -85,8 +84,7 @@ while cam.isOpened():
 					p1.setDaemon(True)
 					p1.start()
 					cv2.imshow("plate",splate)
-				except Exception as e:
-					print(e)
+				except:
 					pass
 		if VERIFIED:
 			break
