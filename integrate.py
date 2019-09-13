@@ -9,8 +9,9 @@ from time import sleep
 from threading import Thread
 from multiprocessing import Process, Pool
 
+window_res=640,480
 cv2.namedWindow("plate_output", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("plate_output", 640,480)
+cv2.resizeWindow("plate_output", *window_res)
 
 face_data = pickle.loads(open("../face_recognition/encodings.pkl","rb").read())
 face_cascade = cv2.CascadeClassifier('../face_recognition/haarcascade_frontalface_default.xml')
@@ -143,7 +144,7 @@ def detect_plates():
 			f=0
 			# img = cv2.flip(img, 0)
 			# img = cv2.flip(img, 1)
-			# img = cv2.resize(img,(640,480))
+			# img = cv2.resize(img,(*window_res))
 			rows,cols,channels = img.shape
 
 			ssdnet.setInput(cv2.dnn.blobFromImage(img,size=(400,400),swapRB=True,crop=False))
@@ -190,7 +191,8 @@ def detect_plates():
 
 detect_plates()
 cv2.destroyAllWindows()
+sleep(1)
 cv2.namedWindow("face_rec", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("face_rec", 640,480)
+cv2.resizeWindow("face_rec", *window_res)
 recog_faces()
 cam.stop()
