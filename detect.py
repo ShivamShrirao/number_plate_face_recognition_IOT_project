@@ -6,14 +6,14 @@ COLOR = (0,255,0)
 
 ssdnet = cv2.dnn.readNetFromTensorflow('trained_model/frozen_inference_graph.pb','trained_model/graph.pbtxt')
 
-cam = cv2.VideoCapture('vid.mp4')
-# cam = cv2.VideoCapture(0)
+# cam = cv2.VideoCapture('vid.mp4')
+cam = cv2.VideoCapture(0)
 
 cv2.namedWindow("output", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("output", 1280,720)
+# cv2.resizeWindow("output", 1280,720)
 
 f=0
-while f<150:
+while f<0:
 	ret, img = cam.read()
 	f+=1
 
@@ -36,8 +36,11 @@ while cam.isOpened():
 		first=np.argmax(scores)
 		scores.pop(first)
 		second=np.argmax(scores)
+		idtxs=[first,second]
+	else:
+		idtxs = range(len(scores))
 
-	for idx in [first,second]:
+	for idx in idtxs:
 		detection=netout[0,0][idx]
 		score = float(detection[2])
 		if score >0.2:
@@ -57,11 +60,10 @@ while cam.isOpened():
 				# ret,plate = cv2.threshold(plate,127,255,cv2.THRESH_BINARY)
 				plate = cv2.adaptiveThreshold(plate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,7,2)				
 				text=pytesseract.image_to_string(plate,lang='eng',config="-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-				if len(text)>9 and len(text)<16:
+				if len(text)>5 and len(text)<16:
 					print(text)
 				cv2.imshow("plate",plate)
-			except Exception as e:
-				print(e)
+			except:
 				pass
 
 	cv2.imshow("output", img)
