@@ -35,6 +35,16 @@ ssdnet = cv2.dnn.readNetFromTensorflow('trained_model/frozen_inference_graph.pb'
 
 KNOWN_PLATES=["DL3CAM0857","HR26DK8337","MH12DE1433"]
 
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(ECHO,GPIO.IN)
+GPIO.setup(TRIGGER,GPIO.OUT)
+GPIO.setup(TRIGGER,GPIO.OUT)
+GPIO.setup(GREEN_LED,GPIO.OUT)
+GPIO.setup(RED_LED,GPIO.OUT)
+
+GPIO.output(ULTRA_VCC,GPIO.HIGH)
+
 def get_text():
 	global plate,splate,text
 	plate = cv2.GaussianBlur(plate, (7, 7), 0)
@@ -204,13 +214,38 @@ def detect_plates():
 		if key == ord('q'):
 			break
 
-detect_plates()
-cv2.destroyAllWindows()
-sleep(1)
-cv2.namedWindow("face_rec", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("face_rec", *window_res)
-recog_faces()
-subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','1'])
-sleep(5)
-subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','0'])
+while True:
+	time.sleep(1)
+	GPIO.output(TRIGGER,True)
+	time.sleep(0.00001)
+	GPIO.output(TRIGGER,False)
+
+	while GPIO.input(ECHO)==0:
+		start = time.time()
+	while GPIO.input(ECHO)==1:
+		stop = time.time()
+
+	time_elap = stop-start
+	distance = time_elap*17150
+	if distance<25:
+		GPIO.output(RED_LED,GPIO.HIGH)
+		detect_plates()
+		cv2.destroyAllWindows()
+		if VERIFIED:
+			sleep(1)
+			cv2.namedWindow("face_rec", cv2.WINDOW_NORMAL)
+			cv2.resizeWindow("face_rec", *window_res)
+			recog_faces()
+			if VERIFIED:
+				GPIO.output(RED_LED,GPIO.LOW)
+				GPIO.output(GREEN_LED,GPIO.HIGH)
+				subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','1'])
+				sleep(5)
+				subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','0'])
+				cv2.destroyAllWindows()
+				break
+		GPIO.output(GREEN_LED,GPIO.LOW)
+		sleep(2)
+		GPIO.output(RED_LED,GPIO.LOW)
+
 cam.stop()
