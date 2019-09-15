@@ -1,15 +1,28 @@
+#!/usr/bin/env python3
 import cv2
 import pickle
 import face_recognition
 import imutils
 import numpy as np
 import pytesseract
+import subprocess
+import time
+import RPi .GPIO as GPIO
 from imutils.video import VideoStream
 from time import sleep
 from threading import Thread
 from multiprocessing import Process, Pool
 
-window_res=640,480
+MOTOR_PIN1=5
+MOTOR_PIN2=7
+
+TRIGGER=40
+ECHO=38
+GREEN_LED=36
+RED_LED=29
+ULTRA_VCC=37
+
+window_res=540,380
 cv2.namedWindow("plate_output", cv2.WINDOW_NORMAL)
 cv2.resizeWindow("plate_output", *window_res)
 
@@ -40,7 +53,7 @@ def verify_plate():
 		for key in pl:
 			if key in text[goch:]:
 				goch+=1
-		if goch/len(pl)>=0.9:
+		if goch/len(pl)>=0.8:
 			VERIFIED=True
 			COLOR=GREEN
 			print("[*] Number Plate Verified",pl,"\t",goch/len(pl)*100,"%")
@@ -64,7 +77,7 @@ def verify_faces(names):
 	for name in names:
 		if name!="Unknown":
 			det_names[name]+=1
-			if det_names[name]>3:
+			if det_names[name]>=3:
 				VERIFIED=True
 				COLOR=GREEN
 				print("[*] Authorization complete with",name,'.')
@@ -125,6 +138,7 @@ def recog_faces():
 			except:
 				pass
 			if VERIFIED:
+				print("[!] exitting face_rec")
 				break
 		key = cv2.waitKey(1) & 0xff
 		if key == ord('q'):
@@ -183,6 +197,7 @@ def detect_plates():
 					except:
 						pass
 			if VERIFIED:
+				print("[!] exitting plate_out")
 				break
 			cv2.imshow("plate_output", img)
 		key = cv2.waitKey(1) & 0xff
@@ -195,4 +210,7 @@ sleep(1)
 cv2.namedWindow("face_rec", cv2.WINDOW_NORMAL)
 cv2.resizeWindow("face_rec", *window_res)
 recog_faces()
+subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','1'])
+sleep(5)
+subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','0'])
 cam.stop()
