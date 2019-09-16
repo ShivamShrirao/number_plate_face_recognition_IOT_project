@@ -77,12 +77,12 @@ def determine_faces(encoding):
 	return name
 
 def verify_faces(names):
-	global VERIFIED,COLOR,det_names
+	global VERIFIED_FACE,COLOR,det_names
 	for name in names:
 		if name!="Unknown":
 			det_names[name]+=1
 			if det_names[name]>=3:
-				VERIFIED=True
+				VERIFIED_FACE=True
 				COLOR=GREEN
 				print("[*] Authorization complete with",name,'.')
 
@@ -96,13 +96,14 @@ def unload_buffer():
 cam = VideoStream(src=0).start()
 
 VERIFIED=False
+VERIFIED_FACE=False
 COLOR=RED
 det_names=dict.fromkeys(set(face_data["names"]))
 def recog_faces():
-	global VERIFIED,COLOR,det_names
+	global VERIFIED_FACE,COLOR,det_names
 	for key in det_names.keys():
 		det_names[key]=0
-	VERIFIED=False
+	VERIFIED_FACE=False
 	COLOR=RED
 	pol=Pool()
 	f=0
@@ -141,7 +142,7 @@ def recog_faces():
 				cv2.imshow('face_rec', img)
 			except:
 				pass
-			if VERIFIED:
+			if VERIFIED_FACE:
 				print("[!] exitting face_rec")
 				break
 		key = cv2.waitKey(1) & 0xff
@@ -208,6 +209,7 @@ def detect_plates():
 		if key == ord('q'):
 			break
 
+subprocess.call(['/home/pi/number_plate_detection/led.py'])
 print("[*] Starting ultrasonic.")
 while True:
 	time.sleep(1)
@@ -231,16 +233,17 @@ while True:
 		cv2.destroyAllWindows()
 		if VERIFIED:
 			sleep(1)
+			VERIFIED_FACE=False
 			cv2.namedWindow("face_rec", cv2.WINDOW_NORMAL)
 			cv2.resizeWindow("face_rec", *window_res)
 			recog_faces()
 			if VERIFIED:
 				GPIO.output(RED_LED,GPIO.LOW)
 				GPIO.output(GREEN_LED,GPIO.HIGH)
+				cv2.destroyAllWindows()
 				subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','1'])
 				sleep(4)
 				subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','0'])
-				cv2.destroyAllWindows()
 				break
 GPIO.output(GREEN_LED,GPIO.LOW)
 sleep(2)

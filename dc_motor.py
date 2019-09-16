@@ -22,6 +22,6 @@ if int(sys.argv[1]):
 else:
 	GPIO.output(MOTOR_PIN1,GPIO.HIGH)
 	GPIO.output(MOTOR_PIN2,GPIO.LOW)
-sleep(2.1)
+sleep(2.4)
 GPIO.output(MOTOR_PIN1,GPIO.LOW)
 GPIO.output(MOTOR_PIN2,GPIO.LOW)
