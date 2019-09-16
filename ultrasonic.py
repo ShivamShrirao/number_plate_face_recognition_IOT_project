@@ -10,7 +10,7 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(ECHO,GPIO.IN)
 GPIO.setup(TRIGGER,GPIO.OUT)
-GPIO.setup(TRIGGER,GPIO.OUT)
+GPIO.setup(ULTRA_VCC,GPIO.OUT)
 GPIO.output(ULTRA_VCC,GPIO.HIGH)
 
 while True:
