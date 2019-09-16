@@ -5,11 +5,16 @@ import sys
 
 MOTOR_PIN1=5
 MOTOR_PIN2=7
+MOT_VCC=37
+
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(MOTOR_PIN1,GPIO.OUT)
 GPIO.setup(MOTOR_PIN2,GPIO.OUT)
+
+GPIO.setup(MOT_VCC,GPIO.OUT)
+GPIO.output(MOT_VCC,GPIO.HIGH)
 
 if int(sys.argv[1]):
 	GPIO.output(MOTOR_PIN1,GPIO.LOW)
@@ -17,6 +22,6 @@ if int(sys.argv[1]):
 else:
 	GPIO.output(MOTOR_PIN1,GPIO.HIGH)
 	GPIO.output(MOTOR_PIN2,GPIO.LOW)
-sleep(1.4)
+sleep(2.1)
 GPIO.output(MOTOR_PIN1,GPIO.LOW)
 GPIO.output(MOTOR_PIN2,GPIO.LOW)

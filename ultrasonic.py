@@ -4,14 +4,11 @@ import time
 
 TRIGGER=40
 ECHO=38
-ULTRA_VCC=37
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(ECHO,GPIO.IN)
 GPIO.setup(TRIGGER,GPIO.OUT)
-GPIO.setup(ULTRA_VCC,GPIO.OUT)
-GPIO.output(ULTRA_VCC,GPIO.HIGH)
 
 while True:
 	GPIO.output(TRIGGER,True)

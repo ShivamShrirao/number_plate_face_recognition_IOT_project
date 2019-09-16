@@ -20,11 +20,8 @@ TRIGGER=40
 ECHO=38
 GREEN_LED=36
 RED_LED=29
-ULTRA_VCC=37
 
 window_res=540,380
-cv2.namedWindow("plate_output", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("plate_output", *window_res)
 
 face_data = pickle.loads(open("../face_recognition/encodings.pkl","rb").read())
 face_cascade = cv2.CascadeClassifier('../face_recognition/haarcascade_frontalface_default.xml')
@@ -39,11 +36,8 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(ECHO,GPIO.IN)
 GPIO.setup(TRIGGER,GPIO.OUT)
-GPIO.setup(ULTRA_VCC,GPIO.OUT)
 GPIO.setup(GREEN_LED,GPIO.OUT)
 GPIO.setup(RED_LED,GPIO.OUT)
-
-GPIO.output(ULTRA_VCC,GPIO.HIGH)
 
 def get_text():
 	global plate,splate,text
@@ -214,6 +208,7 @@ def detect_plates():
 		if key == ord('q'):
 			break
 
+print("[*] Starting ultrasonic.")
 while True:
 	time.sleep(1)
 	GPIO.output(TRIGGER,True)
@@ -227,7 +222,10 @@ while True:
 
 	time_elap = stop-start
 	distance = time_elap*17150
+	print("Distance:",distance)
 	if distance<25:
+		cv2.namedWindow("plate_output", cv2.WINDOW_NORMAL)
+		cv2.resizeWindow("plate_output", *window_res)
 		GPIO.output(RED_LED,GPIO.HIGH)
 		detect_plates()
 		cv2.destroyAllWindows()
