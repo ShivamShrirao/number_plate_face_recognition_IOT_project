@@ -238,12 +238,12 @@ while True:
 				GPIO.output(RED_LED,GPIO.LOW)
 				GPIO.output(GREEN_LED,GPIO.HIGH)
 				subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','1'])
-				sleep(5)
+				sleep(4)
 				subprocess.call(['/home/pi/number_plate_detection/dc_motor.py','0'])
 				cv2.destroyAllWindows()
 				break
-		GPIO.output(GREEN_LED,GPIO.LOW)
-		sleep(2)
-		GPIO.output(RED_LED,GPIO.LOW)
+GPIO.output(GREEN_LED,GPIO.LOW)
+sleep(2)
+GPIO.output(RED_LED,GPIO.LOW)
 
 cam.stop()
