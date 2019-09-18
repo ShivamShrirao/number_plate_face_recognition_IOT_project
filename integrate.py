@@ -30,7 +30,7 @@ GREEN = (0,255,0)
 RED = (0,0,255)
 ssdnet = cv2.dnn.readNetFromTensorflow('trained_model/frozen_inference_graph.pb','trained_model/graph.pbtxt')
 
-KNOWN_PLATES=["DL3CAM0857","HR26DK8337","MH12DE1433"]
+KNOWN_PLATES=["HR26DK8337"]
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -63,7 +63,7 @@ def verify_plate():
 			print("[*] Number Plate Verified",pl,"\t",goch/len(pl)*100,"%")
 
 def determine_faces(encoding):
-	global face_data
+	global face_data,COLOR
 	matches = face_recognition.compare_faces(face_data["encodings"],encoding)
 	name="Unknown"
 	if True in matches:
@@ -74,6 +74,7 @@ def determine_faces(encoding):
 			counts[name] = counts.get(name,0) + 1
 
 		name = max(counts,key=counts.get)
+		COLOR=GREEN
 	return name
 
 def verify_faces(names):
@@ -237,7 +238,7 @@ while True:
 			cv2.namedWindow("face_rec", cv2.WINDOW_NORMAL)
 			cv2.resizeWindow("face_rec", *window_res)
 			recog_faces()
-			if VERIFIED:
+			if VERIFIED_FACE:
 				GPIO.output(RED_LED,GPIO.LOW)
 				GPIO.output(GREEN_LED,GPIO.HIGH)
 				cv2.destroyAllWindows()
