@@ -154,7 +154,7 @@ text=""
 def detect_plates():
 	global plate,VERIFIED,COLOR
 	VERIFIED=False
-	COLOR=RED
+	COLOR=GREEN
 	f=0
 	crop=10
 	while True:
