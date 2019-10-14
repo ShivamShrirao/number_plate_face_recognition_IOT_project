@@ -23,7 +23,7 @@ def get_text():
 	splate = cv2.adaptiveThreshold(plate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,7,2)
 	text=pytesseract.image_to_string(splate,lang='eng',config="--oem 0 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	if len(text)>0 and len(text)<16:
-		print(text)
+		print("Plate:",text)
 		verify_plate()
 
 def verify_plate():
@@ -45,8 +45,8 @@ while cam.isOpened():
 	f+=1
 	if not f%10:
 		f=0
-		img = cv2.flip(img, 0)
-		img = cv2.flip(img, 1)
+		# img = cv2.flip(img, 0)
+		# img = cv2.flip(img, 1)
 		# img = cv2.resize(img,(640,480))
 		rows,cols,channels = img.shape
 
