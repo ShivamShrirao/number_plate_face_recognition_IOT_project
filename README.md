@@ -8,7 +8,16 @@ Mini IOT project I made for number plate detection, reading and face recognition
 
 ## Demo
 
-[![System Video](/login_ss.png)](https://www.youtube.com/watch?v=F_sAMYax1J0 "Click to watch video.")
+[![System Video](/project.jpeg)](https://www.youtube.com/watch?v=F_sAMYax1J0 "Click to watch video.")
 
+![Plate Read](/num_plate_read.png)
 
-https://github.com/ShivamShrirao/face_recognition
+![Face Recognition](/face_rec.png)
+
+![Plate Read](/plate_sys.jpeg)
+
+![Face Rec](/face_sys.jpeg)
+
+![Plate detect](/plate_detect.jpeg)
+
+Face Recognition backend link: https://github.com/ShivamShrirao/face_recognition
