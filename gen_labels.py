@@ -4,7 +4,6 @@ from PIL import Image
 lbl = open("labels.csv","w")
 lbl.write("filename,width,height,class,xmin,ymin,xmax,ymax\n")
 
-
 """
 GENERATE NEGATIVE IMAGES TOO NOW
 """
