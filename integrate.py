@@ -162,12 +162,10 @@ def detect_plates():
 		f+=1
 		if not f%10:
 			f=0
-			# img = cv2.flip(img, 0)
-			# img = cv2.flip(img, 1)
-			# img = cv2.resize(img,(*window_res))
+			img = cv2.resize(img, (300, 300))
 			rows,cols,channels = img.shape
 
-			ssdnet.setInput(cv2.dnn.blobFromImage(img,size=(400,400),swapRB=True,crop=False))
+			ssdnet.setInput(cv2.dnn.blobFromImage(img,size=(300,300),swapRB=True,crop=False))
 			netout = ssdnet.forward()
 
 			scores=[]
